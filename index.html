@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login Firebase</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif; margin: 0; display: grid; place-items: center; min-height: 100vh; background: #0f172a; color: #e2e8f0; }
+    .card { width: 100%; max-width: 420px; background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,.4); }
+    h1 { font-size: 20px; margin: 0 0 16px; }
+    .row { display: grid; gap: 8px; margin-bottom: 12px; }
+    label { font-size: 12px; color: #93c5fd; }
+    input { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #374151; background: #0b1220; color: #e5e7eb; }
+    .btn { width: 100%; padding: 10px 12px; border: 0; border-radius: 8px; background: #2563eb; color: white; cursor: pointer; font-weight: 600; }
+    .btn.secondary { background: #334155; }
+    .grid { display: grid; gap: 8px; grid-template-columns: 1fr 1fr; }
+    .muted { font-size: 12px; color: #94a3b8; margin-top: 8px; text-align: center; }
+    .error { color: #fecaca; background: #7f1d1d; border: 1px solid #ef4444; border-radius: 8px; padding: 8px 10px; font-size: 12px; display: none; }
+    .success { color: #bbf7d0; background: #064e3b; border: 1px solid #10b981; border-radius: 8px; padding: 8px 10px; font-size: 12px; display: none; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Entrar</h1>
+
+    <div id="error" class="error"></div>
+    <div id="success" class="success"></div>
+
+    <div class="row">
+      <label for="email">E-mail</label>
+      <input id="email" type="email" placeholder="seu@email.com" autocomplete="email" />
+    </div>
+
+    <div class="row">
+      <label for="password">Senha</label>
+      <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+
+    <div class="grid" style="margin-bottom:12px;">
+      <button id="signin" class="btn">Entrar</button>
+      <button id="signup" class="btn secondary">Registrar</button>
+    </div>
+
+    <button id="google" class="btn" style="background:#ea4335;">Entrar com Google</button>
+
+    <div class="muted">Após login, seus dados aparecerão abaixo</div>
+
+    <div id="user" class="row hidden" style="margin-top:16px;">
+      <label>Usuário autenticado</label>
+      <input id="uid" type="text" readonly />
+      <input id="uemail" type="text" readonly />
+      <button id="signout" class="btn secondary">Sair</button>
+    </div>
+  </div>
+
+  <script type="module" src="./auth.js"></script>
+</body>
+</html>
