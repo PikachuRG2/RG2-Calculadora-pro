@@ -19,28 +19,195 @@
     .btn { width: fit-content; padding: 10px 12px; border: 0; border-radius: 8px; background: #334155; color: white; cursor: pointer; font-weight: 600; }
     .muted { font-size: 12px; color: #94a3b8; margin-top: 8px; }
     
-  </style>
-</head>
-<body>
-  <div class="card">
-    <h1>Área autenticada</h1>
-    <div class="muted">Substitua este conteúdo pela sua página após login.</div>
-
-    <div id="user" class="row" style="margin-top:16px;">
-      <label>Usuário</label>
-      <input id="uid" type="text" readonly />
-      <input id="uemail" type="text" readonly />
-      <button id="signout" class="btn">Sair</button>
-    </div>
-  </div>
-  
-  <script type="module" src="./auth.js"></script>
-  <script>
-    if('serviceWorker' in navigator){
-      navigator.serviceWorker.register('./service-worker.js').then(reg=>{setInterval(()=>reg.update(),300000)})
-      navigator.serviceWorker.addEventListener('controllerchange',()=>{location.reload()})
-      navigator.serviceWorker.addEventListener('message',e=>{if(e.data&&e.data.type==='NEW_VERSION'){location.reload()}})
+ <style>
+    :root {
+        --verde: #006b36;
+        --amarelo: #ffd100;
+        --cinza: #f1f1f1;
+        --texto: #333333;
+        --logo: #eead2d;
+        --azul-escuro: #003366;
     }
-  </script>
+
+    body {
+        font-family: Arial, sans-serif;
+        background: var(--logo);
+        padding: 0;
+        margin: 0;
+    }
+
+    header {
+        background: var(--azul-escuro);
+        color: white;
+        text-align: center;
+        padding: 18px;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    h3 { 
+        color: var(--verde); 
+        margin-top: 15px; 
+        font-size: 16px;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        transition: 0.2s;
+    }
+
+    .selecionado {
+        border: 3px solid #000;
+        filter: brightness(1.15);
+    }
+
+    .produto { background: var(--amarelo); color: var(--texto); }
+    .pix { background: var(--verde); color: white; }
+    .debito { background: #1f7bb6; color: white; }
+
+    #resultado {
+        margin-top: 15px;
+        padding: 14px;
+        background: var(--cinza);
+        border-radius: 8px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        margin-top: 8px;
+        border-radius: 8px;
+        border: 1px solid #111;
+    }
+
+    .botao-calculadora {
+        position: fixed;
+        bottom: 12px !important;
+        left: 12px !important;
+        right: auto !important;
+        background: var(--verde);
+        color: white;
+        padding: 6px 10px !important;
+        font-size: 12px !important;
+        border-radius: 99px !important;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        z-index: 1000;
+    }
+</style>
+</head>
+
+<body>
+
+<header>⚽ POSTO PARAÍSO ⚽</header>
+
+<div id="calculadora" class="container">
+
+    <h3>Produto</h3>
+    <button id="gasolina" class="produto" onclick="selecionarProduto('gasolina')">Gasolina Comum</button>
+    <button id="aditivada" class="produto" onclick="selecionarProduto('aditivada')">Gasolina Aditivada</button>
+    <button id="diesel" class="produto" onclick="selecionarProduto('diesel')">Diesel Comum/S10</button>
+    <button id="alcool" class="produto" onclick="selecionarProduto('alcool')">Álcool</button>
+
+    <h3>Forma de Pagamento</h3>
+    <button id="pix" class="pix" onclick="selecionarPagamento('pix')">Pix</button>
+    <button id="debito" class="debito" onclick="selecionarPagamento('debito')">Débito</button>
+
+    <h3>Calcular por Litros</h3>
+    <input type="number" id="litros" placeholder="Digite os litros" oninput="calcular()">
+
+    <h3>Calcular por Dinheiro</h3>
+    <input type="number" id="dinheiro" placeholder="Digite o valor em R$" oninput="calcular()">
+
+    <div id="resultado">Total: R$ 0,00</div>
+</div>
+
+<button class="botao-calculadora" onclick="window.location.href='https://pikachurg2.github.io/Calculadora-Pro-PP/'">
+    Calculadora
+</button>
+
+<script>
+    let produto = null;
+    let pagamento = null;
+
+    const precos = {
+        gasolina: { pix: 6.39, debito: 6.59 },
+        aditivada: { pix: 6.49, debito: 6.69 },
+        diesel:   { pix: 5.75, debito: 5.99 },
+        alcool:   { pix: 4.90, debito: 4.90 }
+    };
+
+    function selecionarProduto(tipo) {
+        produto = tipo;
+
+        document.querySelectorAll(".produto").forEach(btn => btn.classList.remove("selecionado"));
+        document.getElementById(tipo).classList.add("selecionado");
+
+        calcular();
+    }
+
+    function selecionarPagamento(tipo) {
+        pagamento = tipo;
+
+        document.querySelectorAll(".pix, .debito").forEach(btn => btn.classList.remove("selecionado"));
+        document.getElementById(tipo).classList.add("selecionado");
+
+        calcular();
+    }
+
+    function calcular() {
+        const litros = parseFloat(document.getElementById("litros").value);
+        const dinheiro = parseFloat(document.getElementById("dinheiro").value);
+
+        if (!produto || !pagamento) {
+            document.getElementById("resultado").innerHTML = "Selecione produto e pagamento";
+            return;
+        }
+
+        const preco = precos[produto][pagamento];
+        const nomeProduto = 
+            produto === "gasolina" ? "Gasolina Comum" :
+            produto === "aditivada" ? "Gasolina Aditivada" :
+            produto === "diesel" ? "Diesel S10" : 
+            "Álcool";
+
+        const nomePagamento = pagamento === "pix" ? "Pix" : "Débito";
+
+        if (!isNaN(litros) && litros > 0) {
+            const total = litros * preco;
+            document.getElementById("resultado").innerHTML =
+                `${nomeProduto} (${nomePagamento})<br><br>
+                Total: <strong>R$ ${total.toFixed(2)}</strong>`;
+            return;
+        }
+
+        if (!isNaN(dinheiro) && dinheiro > 0) {
+            const litrosResult = dinheiro / preco;
+            document.getElementById("resultado").innerHTML =
+                `${nomeProduto} (${nomePagamento})<br><br>
+                Litros: <strong>${litrosResult.toFixed(2)} L</strong>`;
+            return;
+        }
+
+        document.getElementById("resultado").innerHTML = "Total: R$ 0,00";
+    }
+
+    // ATIVANDO PWA
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("sw.js");
+    }
+</script>
 </body>
 </html>
