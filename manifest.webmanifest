@@ -1,6 +1,6 @@
 {
-  "name": "RG2 Calculadora",
-  "short_name": "RG2 Calc",
+  "name": "Calculadora pro",
+  "short_name": "calc pro",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
