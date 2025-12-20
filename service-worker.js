@@ -1,5 +1,5 @@
 const CACHE_NAME='rg2tv-pwa-v2'
-const PRECACHE=['./index.html','./app.html','./auth.js','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png']
+const PRECACHE=['./index.html','./app.html','./auth.js','./manifest.webmanifest','./icons/icon.svg','./icons/icon-192.png','./icons/icon-512.png']
 self.addEventListener('install',e=>{e.waitUntil((async()=>{
   const cache=await caches.open(CACHE_NAME)
   try{await cache.addAll(PRECACHE)}catch(_){
