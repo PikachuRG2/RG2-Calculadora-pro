@@ -11,7 +11,7 @@ const firebaseConfig = {
   measurementId: 'G-8X75M0H60X'
 }
 
-const POST_LOGIN_URL = 'https://rg2tvfree.blogspot.com/p/tv-free.html'
+const POST_LOGIN_URL = 'https://rg-2-cal-2026.vercel.app/'
 
 const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
